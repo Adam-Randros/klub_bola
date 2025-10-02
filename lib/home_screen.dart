@@ -1,11 +1,14 @@
+
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'team.dart';
 import 'team_card.dart';
-import 'auth_page.dart'; // Pastikan file ini ada dan berisi tampilan login
+import 'auth_page.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final String? username;
+
+  const HomeScreen({super.key, this.username});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -18,13 +21,21 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _teamFuture = Team.connectToApi();
+
+    if (widget.username != null && widget.username!.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('You are logged in as ${widget.username}'),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      });
+    }
   }
 
   void _logout() async {
-    // Logout dari Supabase
     await Supabase.instance.client.auth.signOut();
-
-    // Navigasi ke halaman login
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => const AuthPage()),

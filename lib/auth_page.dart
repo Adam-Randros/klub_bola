@@ -1,7 +1,9 @@
+
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'signup_page.dart';
 import 'home_screen.dart';
-import 'main.dart'; // Tambah ini
+import 'main.dart';
 
 class AuthPage extends StatefulWidget {
   const AuthPage({super.key});
@@ -21,12 +23,15 @@ class _AuthPageState extends State<AuthPage> {
         password: _passwordController.text,
       );
       if (response.user != null) {
+        final String email = response.user!.email ?? 'Unknown Email';
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Login successful!')),
+          SnackBar(content: Text('Login successful! Welcome, $email!')),
         );
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          MaterialPageRoute(
+            builder: (context) => HomeScreen(username: email), // Menggunakan email sebagai "username"
+          ),
         );
       }
     } catch (error) {
